@@ -112,37 +112,34 @@ void	*philo_lifecycle(void *data)
 	t_philo	*philo;
 
 	philo = (t_philo *)data;
-	while (philo->set->dead_philo != 1 && philo->num_of_eat != 0)
+	while (philo->set->dead_philo != 1)
 	{
-		if (philo->set->dead_philo != 1)
+		philo->set->eating_philos += 1;
+		pthread_mutex_lock(philo->left);
+		if (philo->set->eating_philos >= g_max)
 		{
-			pthread_mutex_lock(philo->left);
-			philo->set->eating_philos += 1;
-			if (philo->set->eating_philos > g_max)
-			{
-				pthread_mutex_unlock(philo->left);
-				philo->set->eating_philos -= 1;
-			}
-			else
-			{
-				output(philo, left_fork);
-				pthread_mutex_lock(philo->right);
-				output(philo, right_fork);
-				philo->last_eat = get_timestamp();
-				philo->eating = 1;
-				output(philo, eat);
-				usleep(philo->set->time_to_eat);
-				philo->eating = 0;
-				pthread_mutex_unlock(philo->right);
-				pthread_mutex_unlock(philo->left);
-				philo->set->eating_philos -= 1;
-				output(philo, SLEEP);
-				usleep(philo->set->time_to_sleep);
-				output(philo, think);
-				philo->num_of_eat--;
-				if (philo->num_of_eat == 0)
-					philo->set->philos--;
-			}
+			pthread_mutex_unlock(philo->left);
+			philo->set->eating_philos -= 1;
+		}
+		else
+		{
+			output(philo, left_fork);
+			pthread_mutex_lock(philo->right);
+			output(philo, right_fork);
+			philo->last_eat = get_timestamp();
+			philo->eating = 1;
+			output(philo, eat);
+			usleep(philo->set->time_to_eat);
+			philo->eating = 0;
+			pthread_mutex_unlock(philo->right);
+			pthread_mutex_unlock(philo->left);
+			philo->set->eating_philos -= 1;
+			output(philo, SLEEP);
+			usleep(philo->set->time_to_sleep);
+			output(philo, think);
+			philo->num_of_eat--;
+			if (philo->num_of_eat == 0)
+				philo->set->philos--;
 		}
 	}
 	return (NULL);
@@ -184,6 +181,8 @@ void	*check_for_dead(void *data)
 			i = 0;
 		usleep(5 * 1000);
 	}
+	if (set->set->philos == 0)
+		set->set->dead_philo = 1;
 	return (NULL);
 }
 
