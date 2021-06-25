@@ -58,5 +58,6 @@ void	start_dining(t_condition *set);
 void	*philo_lifecycle(void *data);
 void	*check_for_dead(void *data);
 void	output(t_philo *philo, int state);
+void	ft_usleep(long time);
 
 #endif
