@@ -8,6 +8,8 @@
 # include <string.h>
 # include <sys/time.h>
 
+int g_max;
+
 typedef struct s_condition
 {
 	int				philos;
@@ -25,6 +27,7 @@ typedef struct s_condition
 typedef struct	s_philo
 {
 	int			num;
+	int			eating;
 	int			num_of_eat;
 	pthread_mutex_t	*left;
 	pthread_mutex_t	*right;
