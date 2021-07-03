@@ -6,7 +6,7 @@ t_condition *init_set(char **argv)
 	int			i;
 
 	i = 0;
-	set = (t_condition *)malloc(sizeof(set));
+	set = (t_condition *)malloc(sizeof(t_condition));
 	if (set == NULL)
 		return (NULL);
 	set->start = get_timestamp();
