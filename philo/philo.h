@@ -8,56 +8,51 @@
 # include <string.h>
 # include <sys/time.h>
 
-int g_max;
-
 typedef struct s_condition
 {
 	int				philos;
-	unsigned		time_to_die;
-	unsigned		time_to_sleep;
-	unsigned		time_to_eat;
-	unsigned		start;
+	unsigned int	die;
+	unsigned int	sleep;
+	unsigned int	eat;
+	unsigned int	start;
 	int				num_of_eat;
-	int				eating_philos;
 	int				dead_philo;
-	pthread_mutex_t	output;
-	pthread_mutex_t *forks;
+	pthread_mutex_t	*forks;
 }				t_condition;
 
-typedef struct	s_philo
+typedef struct s_philo
 {
-	int			num;
-	int			eating;
-	int			num_of_eat;
+	int				num;
+	int				num_of_eat;
 	pthread_mutex_t	*left;
 	pthread_mutex_t	*right;
-	suseconds_t last_eat;
-	t_condition	*set;
+	unsigned int	last_eat;
+	t_condition		*set;
 }				t_philo;
 
 typedef struct s_data
 {
-	t_condition *set;
+	t_condition	*set;
 	t_philo		*philo;
 }			t_data;
 
 typedef enum e_state
 {
-	left_fork, 
+	left_fork,
 	right_fork,
-	eat, 
+	eat,
 	SLEEP,
 	think
-}			e_state;
+}			t_state;
 
-int			ft_atoi(const char *str);
-unsigned	get_timestamp(void);
-t_condition *init_set(char **argv);
-void	check_set(t_condition *set);
-void	start_dining(t_condition *set);
-void	*philo_lifecycle(void *data);
-void	*check_for_dead(void *data);
-void	output(t_philo *philo, int state);
-void	ft_usleep(long time);
+int				ft_atoi(const char *str);
+unsigned int	get_timestamp(void);
+t_condition		*init_set(char **argv);
+void			start_dining(t_condition *set);
+void			*lifecycle(void *data);
+void			*check_for_dead(void *data);
+void			output(t_philo *philo, int state);
+void			ft_usleep(unsigned int time);
+t_philo			init_philo(int num, t_condition *set);
 
 #endif
