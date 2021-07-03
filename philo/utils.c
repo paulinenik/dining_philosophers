@@ -51,7 +51,7 @@ void	output(t_philo *philo, int state)
 	message[eat] = "is \033[32;1meating\033[0m";
 	message[SLEEP] = "is sleeping";
 	message[think] = "is \033[35;1mthinking\033[0m";
-	if (philo->set->dead_philo != 1 && philo->set->philos > 0)
+	if (philo->set->dead_philo != 1 && philo->set->num > 0)
 		printf("%u ms  %d  %s\n", get_timestamp() - philo->set->start, \
 			philo->num, message[state]);
 }
@@ -64,7 +64,7 @@ t_philo	init_philo(int num, t_condition *set)
 	philo.last_eat = set->start;
 	philo.left = &(set->forks)[num];
 	if (num == 0)
-		philo.right = &(set->forks)[set->philos - 1];
+		philo.right = &(set->forks)[set->num - 1];
 	else
 		philo.right = &(set->forks)[num - 1];
 	philo.set = set;

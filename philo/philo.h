@@ -10,7 +10,7 @@
 
 typedef struct s_condition
 {
-	int				philos;
+	int				num;
 	unsigned int	die;
 	unsigned int	sleep;
 	unsigned int	eat;
