@@ -124,6 +124,9 @@ void	*philo_lifecycle(void *data)
 		{
 			philo->last_eat = get_timestamp();
 			output(philo, eat);
+			philo->num_of_eat--;
+			if (philo->num_of_eat == 0)
+				philo->set->philos--;
 			ft_usleep(philo->set->time_to_eat);
 			philo->eating = 0;
 			pthread_mutex_unlock(philo->right);
@@ -132,9 +135,6 @@ void	*philo_lifecycle(void *data)
 			output(philo, SLEEP);
 			ft_usleep(philo->set->time_to_sleep);
 			output(philo, think);
-			philo->num_of_eat--;
-			if (philo->num_of_eat == 0)
-				philo->set->philos--;
 		}
 		// printf("eating philos %d\n\n", philo->set->eating_philos);
 	}
@@ -150,8 +150,8 @@ void	output(t_philo *philo, int state)
 	message[eat] = "is \033[32;1meating\033[0m";
 	message[SLEEP] = "is sleeping";
 	message[think] = "is \033[35;1mthinking\033[0m";
-	if (philo->set->dead_philo != 1)
-		printf("%u ms  %d  %s\n", get_timestamp() - philo->set->start, philo->num, message[state]);
+	if (philo->set->dead_philo != 1 && philo->set->philos > 0)
+		printf("%u ms  %d  %s   %d num of philos\n", get_timestamp() - philo->set->start, philo->num, message[state], philo->set->philos);
 }
 
 void	*check_for_dead(void *data)
