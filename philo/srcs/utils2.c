@@ -12,6 +12,11 @@ void	clean_data(t_data *set, int philo_amount)
 		pthread_mutex_destroy(&(set->set->forks[i]));
 		i++;
 	}
+	while (i >= 0)
+	{
+		pthread_detach(set->threads[i]);
+		i--;
+	}
 	free(set->threads);
 	free(set->philo);
 	free(set->set->forks);
