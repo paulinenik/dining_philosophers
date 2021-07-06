@@ -7,7 +7,6 @@
 # include <pthread.h>
 # include <string.h>
 # include <sys/time.h>
-
 typedef struct s_condition
 {
 	int				num;
@@ -34,6 +33,7 @@ typedef struct s_data
 {
 	t_condition	*set;
 	t_philo		*philo;
+	pthread_t	*threads;
 }			t_data;
 
 typedef enum e_state
@@ -48,11 +48,12 @@ typedef enum e_state
 int				ft_atoi(const char *str);
 unsigned int	get_timestamp(void);
 t_condition		*init_set(char **argv);
-void			start_dining(t_condition *set);
+int				start_dining(t_condition *set);
 void			*lifecycle(void *data);
 void			*check_for_dead(void *data);
 void			output(t_philo *philo, int state);
 void			ft_usleep(unsigned int time);
 t_philo			init_philo(int num, t_condition *set);
+void			clean_data(t_data *set, int philo_amount);
 
 #endif

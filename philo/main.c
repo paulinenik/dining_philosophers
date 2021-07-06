@@ -22,7 +22,7 @@ t_condition	*init_set(char **argv)
 	while (i < set->num && set->forks != NULL)
 	{
 		if (pthread_mutex_init(&(set->forks)[i], NULL))
-			printf("Error\n");
+			return (NULL);
 		i++;
 	}
 	return (set);
@@ -35,45 +35,46 @@ int	main(int argc, char **argv)
 	if (argc < 5 || argc > 6)
 		printf("Wrong number of arguments. How about another try? :)\n");
 	set = init_set(argv);
+	if (set == NULL || set->forks == NULL)
+	{
+		printf("Error\n");
+		free(set);
+		return (1);
+	}
 	if (set->die <= 0 || set->eat <= 0 || set->sleep <= 0 || set->num <= 0)
 		printf("This is not really possible, you know. Give \
 			it another try, friend\n");
-	if (set->forks == NULL)
-	{
-		printf("Malloc error\n");
+	if (start_dining(set) == 1)
 		return (1);
-	}
-	start_dining(set);
-	//free set
 	return (0);
 }
 
-void	start_dining(t_condition *set)
+int	start_dining(t_condition *set)
 {
 	t_philo		*philo;
 	t_data		data;
 	pthread_t	*threads;
 	int			i;
 
-	i = 0;
+	i = -1;
 	philo = (t_philo *)malloc(sizeof(t_philo) * set->num);
-	if (philo == NULL)
-		printf("Malloc error");
 	threads = (pthread_t *)malloc(sizeof(pthread_t) * (set->num + 1));
-	if (threads == NULL)
-		printf("Malloc error");
-	data.set = set;
-	while (i < set->num)
+	if (threads == NULL || threads == NULL)
 	{
-		philo[i] = init_philo(i, set);
-		i++;
+		printf("Malloc error");
+		return (1);
 	}
+	while (++i < set->num)
+		philo[i] = init_philo(i, set);
+	data.set = set;
 	data.philo = philo;
+	data.threads = threads;
 	pthread_create(&threads[i], NULL, &check_for_dead, (void *)&data);
 	while (i-- > 0)
 		pthread_create(&threads[i], NULL, &lifecycle, (void *)&(philo[i]));
 	while (i < set->num)
 		pthread_join(threads[i++], NULL);
+	return (0);
 }
 
 void	*lifecycle(void *data)
@@ -81,7 +82,7 @@ void	*lifecycle(void *data)
 	t_philo	*philo;
 
 	philo = (t_philo *)data;
-	while (philo->set->dead_philo != 1 && philo->set->num != 0)
+	while (philo->set->dead_philo != 1 && philo->set->num > 0)
 	{
 		if (philo->num % 2 == 0)
 			ft_usleep(1);
@@ -113,21 +114,22 @@ void	*check_for_dead(void *data)
 	i = 0;
 	set = (t_data *)data;
 	philo_amount = set->set->num;
-	while (set->set->dead_philo != 1 && set->set->num != 0)
+	while (set->set->dead_philo != 1 && set->set->num > 0)
 	{
 		if ((get_timestamp() - set->philo[i].last_eat) >= set->set->die \
-			 && set->set->num != 0)
+			 && set->set->num > 0)
 		{
 			set->set->dead_philo = 1;
 			pthread_mutex_unlock(set->philo[i].left);
 			printf("\033[33;1m%u ms %d dead\n\033[0m", \
 				get_timestamp() - set->set->start, i + 1);
-			return (NULL);
 		}
 		i++;
 		if (i == philo_amount)
 			i = 0;
-		ft_usleep(3);
+		ft_usleep(2);
 	}
+	ft_usleep(500);
+	clean_data(set, philo_amount);
 	return (NULL);
 }
