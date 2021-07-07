@@ -33,7 +33,10 @@ int	main(int argc, char **argv)
 	t_condition	*set;
 
 	if (argc < 5 || argc > 6)
+	{
 		printf("Wrong number of arguments. How about another try? :)\n");
+		return (1);
+	}
 	set = init_set(argv);
 	if (set == NULL || set->forks == NULL)
 	{
@@ -42,8 +45,11 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	if (set->die <= 0 || set->eat <= 0 || set->sleep <= 0 || set->num <= 0)
-		printf("This is not really possible, you know. Give \
-			it another try, friend\n");
+	{
+		printf("This is not really possible, you know. ");
+		printf("Give it another try, friend\n");
+		return (1);
+	}
 	if (start_dining(set) == 1)
 		return (1);
 	return (0);
@@ -82,16 +88,16 @@ void	*lifecycle(void *data)
 	t_philo	*philo;
 
 	philo = (t_philo *)data;
+	if (philo->num % 2 == 0)
+		usleep(100);
 	while (philo->set->dead_philo != 1 && philo->set->num > 0)
 	{
-		if (philo->num % 2 == 0)
-			ft_usleep(1);
 		pthread_mutex_lock(philo->right);
-		output(philo, right_fork);
+		output(philo, RIGHT_FORK);
 		pthread_mutex_lock(philo->left);
-		output(philo, left_fork);
+		output(philo, LEFT_FORK);
 		philo->last_eat = get_timestamp();
-		output(philo, eat);
+		output(philo, EAT);
 		philo->num_of_eat--;
 		if (philo->num_of_eat == 0)
 			philo->set->num--;
@@ -100,7 +106,7 @@ void	*lifecycle(void *data)
 		pthread_mutex_unlock(philo->left);
 		output(philo, SLEEP);
 		ft_usleep(philo->set->sleep);
-		output(philo, think);
+		output(philo, THINK);
 	}
 	return (NULL);
 }
@@ -129,7 +135,7 @@ void	*check_for_dead(void *data)
 			i = 0;
 		ft_usleep(2);
 	}
-	ft_usleep(500);
+	ft_usleep(600);
 	clean_data(set, philo_amount);
 	return (NULL);
 }

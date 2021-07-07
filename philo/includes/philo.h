@@ -38,11 +38,11 @@ typedef struct s_data
 
 typedef enum e_state
 {
-	left_fork,
-	right_fork,
-	eat,
+	LEFT_FORK,
+	RIGHT_FORK,
+	EAT,
 	SLEEP,
-	think
+	THINK
 }			t_state;
 
 int				ft_atoi(const char *str);

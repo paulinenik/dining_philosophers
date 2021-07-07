@@ -14,10 +14,7 @@ int	ft_atoi(const char *str)
 		i++;
 	}
 	if (str[i] != '\0')
-	{
-		printf("Wrong arguments. Try again\n");
-		return (-1);
-	}
+		return (0);
 	return (num);
 }
 
@@ -46,11 +43,11 @@ void	output(t_philo *philo, int state)
 {
 	char	*message[5];
 
-	message[left_fork] = "has taken left fork";
-	message[right_fork] = "has taken right fork";
-	message[eat] = "is \033[32;1meating\033[0m";
+	message[LEFT_FORK] = "has taken left fork";
+	message[RIGHT_FORK] = "has taken right fork";
+	message[EAT] = "is \033[32;1meating\033[0m";
 	message[SLEEP] = "is sleeping";
-	message[think] = "is \033[35;1mthinking\033[0m";
+	message[THINK] = "is \033[35;1mthinking\033[0m";
 	if (philo->set->dead_philo != 1 && philo->set->num > 0)
 		printf("%u ms  %d  %s\n", get_timestamp() - philo->set->start, \
 			philo->num, message[state]);
