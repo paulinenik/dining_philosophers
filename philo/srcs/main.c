@@ -69,7 +69,6 @@ void	*lifecycle(void *data)
 		pthread_mutex_lock(philo->left);
 		output(philo, LEFT_FORK);
 		output(philo, EAT);
-		philo->last_eat = get_timestamp();
 		pthread_mutex_unlock(philo->right);
 		pthread_mutex_unlock(philo->left);
 		output(philo, SLEEP);
@@ -116,6 +115,8 @@ void	output(t_philo *philo, int state)
 	message[EAT] = "is \033[32;1meating\033[0m";
 	message[SLEEP] = "is sleeping";
 	message[THINK] = "is \033[35;1mthinking\033[0m";
+	if (state == EAT)
+		philo->last_eat = get_timestamp();
 	if (philo->set->dead_philo != 1 && philo->set->num > 0)
 		printf("%u ms  %d  %s\n", get_timestamp() - philo->set->start, \
 			philo->num, message[state]);
