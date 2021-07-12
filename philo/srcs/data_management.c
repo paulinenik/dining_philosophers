@@ -51,11 +51,6 @@ void	clean_data(t_data *set, int philo_amount)
 	int	i;
 
 	i = 0;
-	while (i >= 0)
-	{
-		pthread_detach(set->threads[i]);
-		i--;
-	}
 	while (i < philo_amount)
 	{
 		pthread_mutex_unlock(&(set->set->forks[i]));
