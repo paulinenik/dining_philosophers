@@ -46,6 +46,7 @@ typedef enum e_state
 }			t_state;
 
 int				ft_atoi(const char *str);
+void			init_mutex(t_condition *set);
 unsigned int	get_timestamp(void);
 t_condition		*init_set(char **argv);
 int				start_dining(t_condition *set);

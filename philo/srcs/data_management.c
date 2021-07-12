@@ -5,9 +5,7 @@
 t_condition	*init_set(char **argv)
 {
 	t_condition	*set;
-	int			i;
 
-	i = 0;
 	set = (t_condition *)malloc(sizeof(t_condition));
 	if (set == NULL)
 		return (NULL);
@@ -21,13 +19,24 @@ t_condition	*init_set(char **argv)
 	if (argv[5])
 		set->num_of_eat = ft_atoi(argv[5]);
 	set->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * set->num);
+	init_mutex(set);
+	return (set);
+}
+
+void	init_mutex(t_condition *set)
+{
+	int	i;	
+
+	i = 0;
 	while (i < set->num && set->forks != NULL)
 	{
 		if (pthread_mutex_init(&(set->forks)[i], NULL))
-			return (NULL);
+		{
+			free(set->forks);
+			set->forks = NULL;
+		}
 		i++;
 	}
-	return (set);
 }
 
 t_philo	init_philo(int num, t_condition *set)
