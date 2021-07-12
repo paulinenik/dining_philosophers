@@ -1,26 +1,30 @@
 SRCS	= 	srcs/main.c \
 			srcs/utils.c \
-			srcs/utils2.c
+			srcs/data_management.c
 
-HDRS	= includes
+HDRS	= ./includes
 
 NAME	= philo
 
 CC		= gcc
 
+OBJS	= ${SRCS:c=o}
+
 RM		= rm -f
 
 CFLAGS = -Wall -Wextra -Werror
 
-$(NAME):	$(HDRS) $(SRCS)
-			$(CC) $(CFLAGS) $(SRCS) -I./$(HDRS) -o $(NAME)
-			@echo "\033[36mphilosophers by rgordon are compiled successfully\n\033[0m"
+$(NAME):	$(OBJS) $(HDRS) $(SRCS)
+			$(CC) $(CFLAGS)  -I$(HDRS) $(OBJS) -o $(NAME)
+			@echo "\033[36mphilosophers by rgordon are compiled successfully\nmade with norminette 3.3.0\033[0m"
 
+$(OBJS):	%.o:%.c
+			$(CC) $(CFLAGS) -I$(HDRS) -c $< -o $@
 		
 all:		$(NAME)
 
 clean:	
-			$(RM) $(NAME)
+			$(RM) $(NAME) $(OBJS) 
 
 test_1:		$(NAME)
 			@echo "\033[36;1mA philosopher should die!\n\033[0m"

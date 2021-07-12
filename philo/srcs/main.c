@@ -1,33 +1,5 @@
 #include "philo.h"
 
-t_condition	*init_set(char **argv)
-{
-	t_condition	*set;
-	int			i;
-
-	i = 0;
-	set = (t_condition *)malloc(sizeof(t_condition));
-	if (set == NULL)
-		return (NULL);
-	set->start = get_timestamp();
-	set->dead_philo = 0;
-	set->num = ft_atoi(argv[1]);
-	set->die = ft_atoi(argv[2]);
-	set->eat = ft_atoi(argv[3]);
-	set->sleep = ft_atoi(argv[4]);
-	set->num_of_eat = -1;
-	if (argv[5])
-		set->num_of_eat = ft_atoi(argv[5]);
-	set->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * set->num);
-	while (i < set->num && set->forks != NULL)
-	{
-		if (pthread_mutex_init(&(set->forks)[i], NULL))
-			return (NULL);
-		i++;
-	}
-	return (set);
-}
-
 int	main(int argc, char **argv)
 {
 	t_condition	*set;
@@ -96,16 +68,11 @@ void	*lifecycle(void *data)
 		output(philo, RIGHT_FORK);
 		pthread_mutex_lock(philo->left);
 		output(philo, LEFT_FORK);
-		philo->last_eat = get_timestamp();
 		output(philo, EAT);
-		philo->num_of_eat--;
-		if (philo->num_of_eat == 0)
-			philo->set->num--;
-		ft_usleep(philo->set->eat);
+		philo->last_eat = get_timestamp();
 		pthread_mutex_unlock(philo->right);
 		pthread_mutex_unlock(philo->left);
 		output(philo, SLEEP);
-		ft_usleep(philo->set->sleep);
 		output(philo, THINK);
 	}
 	return (NULL);
@@ -133,9 +100,32 @@ void	*check_for_dead(void *data)
 		i++;
 		if (i == philo_amount)
 			i = 0;
-		ft_usleep(2);
+		usleep(2 * 1000);
 	}
-	ft_usleep(600);
+	usleep(600 * 1000);
 	clean_data(set, philo_amount);
 	return (NULL);
+}
+
+void	output(t_philo *philo, int state)
+{
+	char	*message[5];
+
+	message[LEFT_FORK] = "has taken left fork";
+	message[RIGHT_FORK] = "has taken right fork";
+	message[EAT] = "is \033[32;1meating\033[0m";
+	message[SLEEP] = "is sleeping";
+	message[THINK] = "is \033[35;1mthinking\033[0m";
+	if (philo->set->dead_philo != 1 && philo->set->num > 0)
+		printf("%u ms  %d  %s\n", get_timestamp() - philo->set->start, \
+			philo->num, message[state]);
+	if (state == EAT && philo->set->dead_philo != 1)
+	{
+		philo->num_of_eat--;
+		if (philo->num_of_eat == 0)
+			philo->set->num--;
+		ft_usleep(philo, philo->set->eat);
+	}
+	if (state == SLEEP && philo->set->dead_philo != 1)
+		ft_usleep(philo, philo->set->sleep);
 }
