@@ -22,7 +22,7 @@ int	main(int argc, char **argv)
 		printf("Give it another try, friend\n");
 		return (1);
 	}
-	if (start_dining(set) == 1)
+	if (set->num_of_eat != 0 && start_dining(set) == 1)
 		return (1);
 	return (0);
 }
